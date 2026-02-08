@@ -1,0 +1,66 @@
+{
+  "command.guild.add.failed": "Couldn't create guild: Name's already existing",
+  "command.guild.add.noBanner": "You must be holding a banner to do this",
+  "command.guild.add.success": "Successfully created a new Guild called %1$s",
+  "command.guild.add.alreadyMember": "You are already member of %1$s",
+  "command.guild.add.duplicateBanner": "This Banner has already been used",
+  "command.guild.disband.success": "Successfully disbanded guild %1§s",
+  "command.guild.fail.noGuild": "You are in no Guild",
+  "command.guild.invite.isInvited": "%1$s has already been invited",
+  "command.guild.invite.isMember": "%1$s is already member of this Guild",
+  "command.guild.invite.success": "Successfully Invited %1$s to the Guild",
+  "command.guild.join.already_in": "You are already member of %1$s",
+  "command.guild.join.failed": "Failed to join %1$s",
+  "command.guild.join.invite.accept": "You successfully accepted the invite and joined %1$s",
+  "command.guild.join.invite.failed": "Couldn't join %1$s: wrong invite Key",
+  "command.guild.join.success": "You have successfully joined %1$s",
+  "command.guild.kick.failed": "Could not kick %1$s from the guild",
+  "command.guild.kick.isOwner": "Can not kick Owner",
+  "command.guild.kick.success": "Successfully kicked %1$s from the guild",
+  "command.guild.leave.fail": "Unable to leave guild '%1$s': You are no member xD",
+  "command.guild.leave.success": "Successfully left %1$s",
+  "command.guild.promote.failed": "Failed to promote %1$s",
+  "command.guild.promote.isOwner": "The target Player (%1$s) is the Guild Owner",
+  "command.guild.promote.alreadyMax": "The target Player (%1$s) can not be promoted further",
+  "command.guild.promote.isSame": "%1$s already owns this Rank",
+  "command.guild.promote.notMember": "Can not apply Rank since %1$s is not part of the guild",
+  "command.guild.promote.success": "Successfully promoted %1$s to %2$s",
+
+
+  "command.show.chest": "%1$s has %2$s as there chestplate",
+  "command.show.empty_item": "You need to hold a item to show it",
+  "command.show.feet": "%1$s has %2$s as there boots",
+  "command.show.head": "%1$s has %2$s as there helmet",
+  "command.show.legs": "%1$s has %2$s as there leggings",
+  "command.show.mainhand": "%1$s is holding %2$s",
+  "command.show.offhand": "%1$s has %2$s in there offhand",
+
+
+  "gemstone_applicable_title": "Possible Gemstones:",
+
+  "guild.banner.name": "%1$s's Banner",
+  "guild.create.duplicateName": "§cThat name's already existing :C",
+  "guild.create.duplicateBanner": "§cThat banner's already used",
+  "guild.create.success": "§aSuccessfully created new guild!",
+  "guild.invite": "%1$s has invited you to join %2$s",
+  "guild.invite.accept.append": " to join the guild",
+  "guild.kick": "You've been kicked from your guild %1$s",
+  "guild.member_count": "Members (%1$s):",
+  "guild.owner": "Owner: %1$s",
+  "guild.war.start": "The Guild has been challenged by %1$s",
+
+  "gui.create_guild": "Create Guild",
+
+  "gui.guilds.members_title": "Members",
+
+  "gui.guild.set_muted": "Mute",
+  "gui.guild.kick_member": "Kick",
+  "gui.guild.ban_member": "Ban",
+  "gui.guild.missing_name": "You're guild is missing a name!",
+  "gui.guild.create_fetch": "Creating Guild...",
+
+  "gui.guild_public": "Guild Public",
+  "gui.guild_public.desc": "wether the guild should be public (allow invites)",
+  "gui.join_guild": "or Join a Guild",
+  "guild.create.no_banner": "Hold a Banner to create a guild!"
+}
