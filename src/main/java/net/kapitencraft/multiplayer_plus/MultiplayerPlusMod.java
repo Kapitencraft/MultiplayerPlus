@@ -12,7 +12,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MultiplayerPlusMod.MOD_ID)
 public class MultiplayerPlusMod {
     // Define mod id in a common place for everything to reference

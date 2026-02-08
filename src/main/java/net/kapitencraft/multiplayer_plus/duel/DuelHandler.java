@@ -62,12 +62,9 @@ public class DuelHandler extends SavedData {
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         ListTag duels = new ListTag();
         for (Duel duel : this.duels) {
-
+            duels.add(duel.save());
         }
-        for (int i = 0; i < duels.size(); i++) {
-
-            tag.put("duel" + i, duels.get(i).save());
-        }
+        tag.put("duels", duels);
         return tag;
     }
 }

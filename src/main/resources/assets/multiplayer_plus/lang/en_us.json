@@ -26,7 +26,6 @@
   "command.guild.promote.notMember": "Can not apply Rank since %1$s is not part of the guild",
   "command.guild.promote.success": "Successfully promoted %1$s to %2$s",
 
-
   "command.show.chest": "%1$s has %2$s as there chestplate",
   "command.show.empty_item": "You need to hold a item to show it",
   "command.show.feet": "%1$s has %2$s as there boots",
@@ -34,9 +33,6 @@
   "command.show.legs": "%1$s has %2$s as there leggings",
   "command.show.mainhand": "%1$s is holding %2$s",
   "command.show.offhand": "%1$s has %2$s in there offhand",
-
-
-  "gemstone_applicable_title": "Possible Gemstones:",
 
   "guild.banner.name": "%1$s's Banner",
   "guild.create.duplicateName": "§cThat name's already existing :C",
@@ -62,5 +58,8 @@
   "gui.guild_public": "Guild Public",
   "gui.guild_public.desc": "wether the guild should be public (allow invites)",
   "gui.join_guild": "or Join a Guild",
-  "guild.create.no_banner": "Hold a Banner to create a guild!"
+  "guild.create.no_banner": "Hold a Banner to create a guild!",
+  "command.guild.fail.unauthorized": "You are not authorized to execute this order",
+  "command.guild.mute.success": "Successfully muted member %1$s",
+  "command.guild.ban.success": "Successfully banned %1$s from the guild"
 }

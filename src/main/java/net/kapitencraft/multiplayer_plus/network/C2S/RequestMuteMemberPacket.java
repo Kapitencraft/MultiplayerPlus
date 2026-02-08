@@ -7,20 +7,26 @@ import net.kapitencraft.multiplayer_plus.guild.GuildHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record RequestKickMemberPacket(UUID id) implements CustomPacketPayload {
-    public static final StreamCodec<ByteBuf, RequestKickMemberPacket> STREAM_CODEC = UUIDUtil.STREAM_CODEC.map(RequestKickMemberPacket::new, RequestKickMemberPacket::id);
-    public static final Type<RequestKickMemberPacket> TYPE = new Type<>(MultiplayerPlusMod.res("guild/request/kick_member"));
+public record RequestMuteMemberPacket(UUID id, long duration) implements CustomPacketPayload {
+    public static final StreamCodec<ByteBuf, RequestMuteMemberPacket> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC, RequestMuteMemberPacket::id,
+            ByteBufCodecs.VAR_LONG, RequestMuteMemberPacket::duration,
+            RequestMuteMemberPacket::new
+    );
+    public static final Type<RequestMuteMemberPacket> TYPE = new Type<>(MultiplayerPlusMod.res("guild/request/mute"));
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
@@ -38,12 +44,7 @@ public record RequestKickMemberPacket(UUID id) implements CustomPacketPayload {
             Guild.LOGGER.warn("Player \"{}\" illegally attempted to perform action beyond their permission level", player.getScoreboardName());
             context.disconnect(Component.translatable("command.guild.fail.unauthorized"));
         }
-        Player target = level.getPlayerByUUID(id);
-        if (target != null)
-            guild.kickMember(target, Guild.KickReason.KICK);
-        else {
-            guild.removeOfflineMember(id, Guild.KickReason.KICK);
-        } //TODO find name while offline
-        player.sendSystemMessage(Component.translatable("command.guild.kick.success", target).withStyle(ChatFormatting.GREEN));
+        guild.muteMember(id, duration);
+        player.sendSystemMessage(Component.translatable("command.guild.mute.success", id).withStyle(ChatFormatting.GREEN));
     }
 }

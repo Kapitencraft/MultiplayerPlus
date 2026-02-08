@@ -28,8 +28,7 @@ public record PlayerLeaveGuildPacket(UUID player) implements CustomPacketPayload
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null) {
             Player player = level.getPlayerByUUID(player());
-            Guild.LOGGER.info("received data to remove {} from their guild", player);
-            GuildHandler.getClientInstance().getGuildForPlayer(player).kickMember(player, Guild.KickStatus.LEAVE);
+            GuildHandler.getClientInstance().getGuildForPlayer(player).kickMember(player, Guild.KickReason.LEAVE);
         }
     }
 }

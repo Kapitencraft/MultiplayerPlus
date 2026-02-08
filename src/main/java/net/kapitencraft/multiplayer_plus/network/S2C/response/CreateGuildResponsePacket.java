@@ -1,4 +1,4 @@
-package net.kapitencraft.multiplayer_plus.network.S2C;
+package net.kapitencraft.multiplayer_plus.network.S2C.response;
 
 import io.netty.buffer.ByteBuf;
 import net.kapitencraft.kap_lib.helpers.ExtraStreamCodecs;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record CreateGuildResponsePacket(Result result) implements CustomPacketPayload {
     public static final StreamCodec<ByteBuf, CreateGuildResponsePacket> CODEC = Result.CODEC.map(CreateGuildResponsePacket::new, CreateGuildResponsePacket::result);
-    public static final Type<CreateGuildResponsePacket> TYPE = new Type<>(MultiplayerPlusMod.res("guild/create_response"));
+    public static final Type<CreateGuildResponsePacket> TYPE = new Type<>(MultiplayerPlusMod.res("guild/response/create"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

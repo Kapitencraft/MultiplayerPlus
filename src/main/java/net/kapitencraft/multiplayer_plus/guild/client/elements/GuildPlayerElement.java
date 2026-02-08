@@ -1,6 +1,5 @@
 package net.kapitencraft.multiplayer_plus.guild.client.elements;
 
-import net.kapitencraft.kap_lib.client.LibClient;
 import net.kapitencraft.kap_lib.client.gui.screen.MenuableScreen;
 import net.kapitencraft.kap_lib.client.widget.menu.Menu;
 import net.kapitencraft.kap_lib.client.widget.menu.drop_down.DropDownMenu;
@@ -9,15 +8,14 @@ import net.kapitencraft.kap_lib.client.widget.menu.drop_down.elements.TimeSelect
 import net.kapitencraft.kap_lib.client.widget.menu.scroll.elements.ScrollElement;
 import net.kapitencraft.multiplayer_plus.guild.Guild;
 import net.kapitencraft.multiplayer_plus.guild.GuildHandler;
-import net.kapitencraft.multiplayer_plus.registry.ModDataRequesters;
+import net.kapitencraft.multiplayer_plus.network.C2S.RequestBanMemberPacket;
+import net.kapitencraft.multiplayer_plus.network.C2S.RequestKickMemberPacket;
+import net.kapitencraft.multiplayer_plus.network.C2S.RequestMuteMemberPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class GuildPlayerElement extends ScrollElement {
-    private final ResourceLocation skin;
-    private final String name;
+    private final Component name;
     private final UUID playerUUID;
 
-    public GuildPlayerElement(PlayerInfo info) {
-        this.name = info.getProfile().getName();
-        this.skin = info.getSkin().texture();
-        this.playerUUID = info.getProfile().getId();
+    public GuildPlayerElement(Player player) {
+        this.name = player.getDisplayName();
+        this.playerUUID = player.getUUID();
     }
 
 
@@ -43,7 +39,6 @@ public class GuildPlayerElement extends ScrollElement {
 
     @Override
     public void render(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        PlayerFaceRenderer.draw(pGuiGraphics, this.skin, this.x + 1, this.y + 1, 8);
         pGuiGraphics.drawString(Minecraft.getInstance().font, this.name, this.x + 10, this.y + 1, -1);
     }
 
@@ -55,33 +50,24 @@ public class GuildPlayerElement extends ScrollElement {
                 .getRank(player);
         DropDownMenu menu = new DropDownMenu(x, y, this);
         if (rank.getPermissionLevel() >= 2) menu.addElement(TimeSelectorElement.builder()
-                .setName(Component.translatable("gui.guild.set_muted")));
-                //.setOnTimeSet(aLong ->
-                //        handler.createRequest(ModDataRequesters.MUTE_MEMBER.get(), new Pair<>(this.playerUUID, aLong), simpleSuccessResult ->
-                //                sendMessage(player, "mute_member", simpleSuccessResult)
-                //        )
-                //);
+                .setName(Component.translatable("gui.guild.set_muted"))
+                .onTimeSet(aLong ->
+                        PacketDistributor.sendToServer(new RequestMuteMemberPacket(this.playerUUID, aLong))
+                )
+        );
         if (rank.getPermissionLevel() >= 3) menu.addElement(ButtonElement.builder()
                 .setName(Component.translatable("gui.guild.kick_member"))
                 .setExecutor(() ->
-                                PacketDistributor.sendToServer(new )
-                        handler.createRequest(ModDataRequesters.KICK_MEMBER.get(), this.playerUUID, simpleSuccessResult ->
-                                sendMessage(player, "kick_member", simpleSuccessResult)
-                        )
+                        PacketDistributor.sendToServer(new RequestKickMemberPacket(this.playerUUID))
                 )
         );
         if (rank.getPermissionLevel() >= 4) menu.addElement(TimeSelectorElement.builder()
                 .setName(Component.translatable("gui.guild.ban_member"))
-                //.setOnTimeSet(aLong ->
-                //        handler.createRequest(ModDataRequesters.BAN_PLAYER.get(), new Pair<>(this.playerUUID, aLong), simpleSuccessResult ->
-                //                sendMessage(player, "ban_player", simpleSuccessResult)
-                //))
+                .onTimeSet(aLong ->
+                        PacketDistributor.sendToServer(new RequestBanMemberPacket(this.playerUUID, aLong))
+                )
         );
 
         return menu;
-    }
-
-    private void sendMessage(Player player, String id, SimpleSuccessResult simpleSuccessResult) {
-        player.sendSystemMessage(Component.translatable("gui.guild." + id + "." + simpleSuccessResult.id()).withStyle(simpleSuccessResult.success() ? ChatFormatting.GREEN : ChatFormatting.RED));
     }
 }

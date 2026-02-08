@@ -214,6 +214,10 @@ public class Guild implements Pingable, IBrowsable {
         this.members.ban(player, until);
     }
 
+    public void handleLogin(Player player) {
+        this.members.handleLogin(player);
+    }
+
     public class MemberContainer {
         public static final String PLAYER_GUILD_NAME_TAG = "GuildName";
         private static final StreamCodec<ByteBuf, Map<UUID, String>> INVITES_CODEC = ByteBufCodecs.STRING_UTF8.apply(ExtraStreamCodecs.map(UUIDUtil.STREAM_CODEC));
@@ -222,6 +226,7 @@ public class Guild implements Pingable, IBrowsable {
 
         private final Map<UUID, String> invites = new HashMap<>();
         private final Map<UUID, ContainerElement> members = new HashMap<>();
+        private final Map<UUID, KickReason> pendingKicks = new HashMap<>();
         private final Map<UUID, Long> banned = new HashMap<>();
         private final UUID rawOwner;
         Player cachedOwner = null;
@@ -237,6 +242,17 @@ public class Guild implements Pingable, IBrowsable {
             this.members.putAll(MEMBERS_CODEC.decode(buf));
             this.banned.putAll(BANNED_CODEC.decode(buf));
             this.rawOwner = buf.readUUID();
+        }
+
+        /**
+         * @return whether this player has a Guild set in its persistent data, indicating it should be member of a guild
+         */
+        public static boolean hadGuild(Player player) {
+            return player.getPersistentData().contains(PLAYER_GUILD_NAME_TAG);
+        }
+
+        public static String getGuildName(Player player) {
+            return player.getPersistentData().getString(PLAYER_GUILD_NAME_TAG);
         }
 
         int size() {
@@ -316,7 +332,10 @@ public class Guild implements Pingable, IBrowsable {
         }
 
         public void disband() {
-            this.onlineMembers.keySet().forEach(player -> player.getPersistentData().remove(PLAYER_GUILD_NAME_TAG));
+            this.onlineMembers.keySet().forEach(player -> {
+                sendMemberKickMessage(player, KickReason.DISBAND, Guild.this.name);
+                player.getPersistentData().remove(PLAYER_GUILD_NAME_TAG);
+            });
             this.onlineMembers.clear();
             this.members.clear();
             this.cachedOwner = null;
@@ -422,6 +441,19 @@ public class Guild implements Pingable, IBrowsable {
             element.mutedUntil = buf.readLong();
             element.name = buf.readUtf();
             return element;
+        }
+
+        public void remove(UUID uuid, KickReason reason) {
+            this.members.remove(uuid);
+            this.pendingKicks.put(uuid, reason);
+        }
+
+        public void handleLogin(Player player) {
+            if (!this.members.containsKey(player.getUUID())) {
+                sendMemberKickMessage(player, this.pendingKicks.remove(player.getUUID()), Guild.this.name);
+            } else {
+                //TODO send login message
+            }
         }
 
         private static class ContainerElement {
@@ -638,23 +670,32 @@ public class Guild implements Pingable, IBrowsable {
         return false;
     }
 
-    public void kickMember(@Nullable Player member, KickStatus status) {
-        if (member != null && containsMember(member.getUUID()) && !removed) {
-            removeMember(member);
-            member.sendSystemMessage(Component.translatable("guild." + status.getSerializedName(), this.getGuildName()));
+    public static void sendMemberKickMessage(Player member, KickReason status, String name) {
+        member.sendSystemMessage(Component.translatable("guild." + status.getSerializedName(), name));
+
+    }
+
+    public void removeOfflineMember(UUID uuid, KickReason reason) {
+        this.members.remove(uuid, reason);
+    }
+
+    public void kickMember(Player player, KickReason reason) {
+        if (containsMember(player.getUUID()) && !removed) {
+            removeMember(player);
+            sendMemberKickMessage(player, reason, Guild.this.name);
         }
     }
 
-    public enum KickStatus implements StringRepresentable {
+    public enum KickReason implements StringRepresentable {
         LEAVE("leave"),
         KICK("kick"),
         BAN("ban"),
         DISBAND("disband");
 
-        private static final EnumCodec<KickStatus> CODEC = StringRepresentable.fromEnum(KickStatus::values);
+        private static final EnumCodec<KickReason> CODEC = StringRepresentable.fromEnum(KickReason::values);
         private final String name;
 
-        KickStatus(String name) {
+        KickReason(String name) {
             this.name = name;
         }
 

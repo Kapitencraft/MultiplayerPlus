@@ -6,6 +6,7 @@ import net.kapitencraft.multiplayer_plus.guild.Guild;
 import net.kapitencraft.multiplayer_plus.guild.GuildHandler;
 import net.kapitencraft.multiplayer_plus.guild.client.elements.GuildElement;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,7 @@ public class SelectGuildScreen extends DefaultBackgroundScreen {
         this.source = source;
     }
 
-    private ExtendedEditBox searchField;
+    private EditBox searchField;
 
     @Override
     protected void init() {
@@ -31,8 +32,8 @@ public class SelectGuildScreen extends DefaultBackgroundScreen {
         List<String> guildNames = guilds.stream().map(Guild::display).toList();
         guilds.stream().map(GuildElement::new).forEach(menu::addScrollable);
         this.addRenderableWidget(menu);
-        this.searchField = new ExtendedEditBox(this.font, this.leftPos + 30, this.topPos + 15, this.getImageWidth() - 60, 10, Component.empty(),
-                guildNames::contains);
+        this.searchField = new EditBox(this.font, this.leftPos + 30, this.topPos + 15, this.getImageWidth() - 60, 10, Component.empty());
+        this.searchField.setFilter(guildNames::contains);
         this.searchField.setHint(Component.translatable("gui.search"));
         this.addRenderableWidget(searchField);
     }

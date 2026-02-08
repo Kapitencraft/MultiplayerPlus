@@ -136,7 +136,18 @@ public class GuildHandler extends SavedData {
 
     @SubscribeEvent
     public static void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        all(event.getEntity().level()).forEach(guild -> guild.setOnline(event.getEntity()));
+        GuildHandler.getInstance(event.getEntity().level()).handleLogin(event.getEntity());
+    }
+
+    private void handleLogin(Player player) {
+        Guild guild = this.getGuildForPlayer(player);
+        if (guild == null) {
+            if (Guild.MemberContainer.hadGuild(player)) {
+                Guild.sendMemberKickMessage(player, Guild.KickReason.DISBAND, Guild.MemberContainer.getGuildName(player));
+            }
+        } else {
+            guild.handleLogin(player);
+        }
     }
 
     @SubscribeEvent
